@@ -75,10 +75,10 @@ async function listLightDevices(userId, page = 0, limit = 5) {
   }
   const offset = page * limit;
   const poolConnection = await connection.getConnection();
-  const userSearchSQL = `SELECT l.*, light_switch_state.state_id as current_state  FROM light_switch_state
+  const lightDevicesListSQL = `SELECT l.*, light_switch_state.state_id as current_state  FROM light_switch_state
     LEFT JOIN lights l on light_switch_state.light_id = l.id
     WHERE light_switch_state.access_user_id = ? LIMIT ?, ?`;
-  const [rows] = await poolConnection.execute(userSearchSQL, [userId, offset, limit]);
+  const [rows] = await poolConnection.execute(lightDevicesListSQL, [userId, offset, limit]);
   if (rows && rows.length > 0) {
     return rows;
   }
@@ -91,14 +91,29 @@ async function listAllLightDevices(userId, page = 0, limit = 5) {
   }
   const offset = page * limit;
   const poolConnection = await connection.getConnection();
-  const userSearchSQL = `SELECT l.*, light_switch_state.state_id as current_state  FROM light_switch_state
+  const lightDevicesListSQL = `SELECT l.*, light_switch_state.state_id as current_state  FROM light_switch_state
     LEFT JOIN lights l on light_switch_state.light_id = l.id
     LIMIT ?, ?`;
-  const [rows] = await poolConnection.execute(userSearchSQL, [offset, limit]);
+  const [rows] = await poolConnection.execute(lightDevicesListSQL, [offset, limit]);
   if (rows && rows.length > 0) {
     return rows[0];
   }
   return [];
+}
+
+async function triggerLightDevice(lightId, stateId) {
+  if (!lightId) {
+    const err = new Error('Light device id is required');
+    err.code = 1;
+  }
+  if (!stateId) {
+    const err = new Error('Device state is required');
+    err.code = 2;
+  }
+  const poolConnection = await connection.getConnection();
+  const userSearchSQL = 'UPDATE light_switch_state SET state_id = ? WHERE light_id = ?';
+  const [rows] = await poolConnection.execute(userSearchSQL, [stateId, lightId]);
+  return rows && rows.affectedRows > 0;
 }
 
 module.exports = {
@@ -107,4 +122,5 @@ module.exports = {
   insertNewLightDevice,
   listLightDevices,
   listAllLightDevices,
+  triggerLightDevice,
 };
