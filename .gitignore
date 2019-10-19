@@ -1,6 +1,9 @@
 # ide
 .vscode/
 
+# db files
+database/
+
 # Logs
 logs
 *.log
