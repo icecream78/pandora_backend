@@ -3,7 +3,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
-// TODO: move secret to separate env var
 function generateJWT(userId = 0, login = '') {
   const today = new Date();
   const expirationDate = new Date(today);

@@ -5,7 +5,6 @@ const bluebird = require('bluebird');
 
 const crypto = require('crypto');
 
-// TODO: rewrite logic to SHA-256
 function getPasswordHash(password) {
   const hash = crypto.createHmac('sha256', PASSWORD_SECRET)
     .update(password)
@@ -29,7 +28,6 @@ async function initConnection(host = 'localhost', user = '', password = '', data
   return true;
 }
 
-// TODO: write find user logic in mysql
 async function findUser(login, password) {
   const hashedPassword = getPasswordHash(password);
   const [rows] = await connection.execute('SELECT * FROM users WHERE login = ? AND password = ?', [login, hashedPassword]);
