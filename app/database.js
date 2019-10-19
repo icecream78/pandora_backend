@@ -30,14 +30,25 @@ async function initConnection(host = 'localhost', user = '', password = '', data
 
 async function findUser(login, password) {
   const hashedPassword = getPasswordHash(password);
-  const [rows] = await connection.execute('SELECT * FROM users WHERE login = ? AND password = ?', [login, hashedPassword]);
+  const userSearchSQL = 'SELECT * FROM users WHERE login = ? AND password = ?';
+  const [rows] = await connection.execute(userSearchSQL, [login, hashedPassword]);
   if (rows && rows.length > 0) {
     return rows[0];
   }
   return null;
 }
 
+async function insertNewLightDevice(lightInfo = {
+  name: 'default', manufacturer: '0', address: '', state: 0,
+}) {
+  const newLightSQL = 'INSERT INTO lights(name, manufacturer_id, address, initial_state) VALUES (?, ?, ?, ?)';
+  const insertInfo = [lightInfo.name, lightInfo.manufacturer, lightInfo.address, lightInfo.state];
+  const [res] = await connection.execute(newLightSQL, insertInfo);
+  return res && res.affectedRows > 0;
+}
+
 module.exports = {
   initConnection,
   findUser,
+  insertNewLightDevice,
 };

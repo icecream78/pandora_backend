@@ -1,6 +1,30 @@
+const DUPLICATE_ERROR_CODE = 1062;
+
 // TODO: implement logic creating new light
 async function create(req, res, next) {
-  return res.json({ ok: true, action: 'create' });
+  const {
+    body: {
+      name, manufacturer, address, state,
+    },
+  } = req;
+  if (!name || !manufacturer || !address || !state) {
+    return res.status(422).json({
+      error: 'All fields are required',
+    });
+  }
+
+  try {
+    const insertRes = await req.db.insertNewLightDevice(req.body);
+    if (insertRes) {
+      return res.json({ ok: true, action: 'create' });
+    }
+    return res.status(400).json({ error: 'Error while insert new device' });
+  } catch (err) {
+    if (err.errno === DUPLICATE_ERROR_CODE) {
+      return res.status(409).json({ error: 'Try add dublicate light info' });
+    }
+    return res.status(400).json({ error: 'Error while insert new device' });
+  }
 }
 
 // TODO: implement logic for editing light info
