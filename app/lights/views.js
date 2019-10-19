@@ -38,4 +38,19 @@ async function trigger(req, res, next) {
   return res.json({ ok: true, action: 'switch' });
 }
 
-module.exports = { create, edit, switch: trigger };
+// TODO: implement logic for listing lights
+async function list(req, res, next) {
+  const { body: { page, limit } } = req;
+  let executeFunc = null;
+  if (req.user.role_id === 1) {
+    executeFunc = req.db.listAllLightDevices(page, limit);
+  } else {
+    executeFunc = req.db.listLightDevices(req.user.id, page, limit);
+  }
+  const result = await executeFunc;
+  return res.status(200).json({ result });
+}
+
+module.exports = {
+  create, edit, switch: trigger, list,
+};

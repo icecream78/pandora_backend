@@ -69,8 +69,42 @@ async function insertNewLightDevice(lightInfo = {
   return true;
 }
 
+async function listLightDevices(userId, page = 0, limit = 5) {
+  if (!userId) {
+    throw new Error('User id is required');
+  }
+  const offset = page * limit;
+  const poolConnection = await connection.getConnection();
+  const userSearchSQL = `SELECT l.*, light_switch_state.state_id as current_state  FROM light_switch_state
+    LEFT JOIN lights l on light_switch_state.light_id = l.id
+    WHERE light_switch_state.access_user_id = ? LIMIT ?, ?`;
+  const [rows] = await poolConnection.execute(userSearchSQL, [userId, offset, limit]);
+  if (rows && rows.length > 0) {
+    return rows;
+  }
+  return [];
+}
+
+async function listAllLightDevices(userId, page = 0, limit = 5) {
+  if (!userId) {
+    throw new Error('User id is required');
+  }
+  const offset = page * limit;
+  const poolConnection = await connection.getConnection();
+  const userSearchSQL = `SELECT l.*, light_switch_state.state_id as current_state  FROM light_switch_state
+    LEFT JOIN lights l on light_switch_state.light_id = l.id
+    LIMIT ?, ?`;
+  const [rows] = await poolConnection.execute(userSearchSQL, [offset, limit]);
+  if (rows && rows.length > 0) {
+    return rows[0];
+  }
+  return [];
+}
+
 module.exports = {
   initConnection,
   findUser,
   insertNewLightDevice,
+  listLightDevices,
+  listAllLightDevices,
 };
