@@ -11,7 +11,7 @@ const jwt = require('./jwt');
 const app = express();
 // routers require
 const auth = require('./auth');
-
+const lights = require('./lights');
 
 // Middlewares section
 app.use((req, res, next) => {
@@ -33,6 +33,7 @@ app.use(session({
 
 // routes
 app.use('/auth', auth);
+app.use('/lights', jwt.required, lights);
 
 app.get('/protected', jwt.required, (req, res) => {
   res.send('Hello World!');
