@@ -4,10 +4,10 @@ const DUPLICATE_ERROR_CODE = 1062;
 async function create(req, res, next) {
   const {
     body: {
-      name, manufacturer, address, state,
+      name, manufacturer, address, state, userId,
     },
   } = req;
-  if (!name || !manufacturer || !address || !state) {
+  if (!name || !manufacturer || !address || !state || !userId) {
     return res.status(422).json({
       error: 'All fields are required',
     });
