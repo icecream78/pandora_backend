@@ -75,8 +75,9 @@ async function listLightDevices(userId, page = 0, limit = 5) {
   }
   const offset = page * limit;
   const poolConnection = await connection.getConnection();
-  const lightDevicesListSQL = `SELECT l.*, light_switch_state.state_id as current_state  FROM light_switch_state
+  const lightDevicesListSQL = `SELECT l.id, l.address, l.name as ligth_device_name, l.initial_state, m.name as manufacturer_name, light_switch_state.state_id as current_state  FROM light_switch_state
     LEFT JOIN lights l on light_switch_state.light_id = l.id
+    LEFT JOIN manufacturares m on l.manufacturer_id = m.id
     WHERE light_switch_state.access_user_id = ? LIMIT ?, ?`;
   const [rows] = await poolConnection.execute(lightDevicesListSQL, [userId, offset, limit]);
   if (rows && rows.length > 0) {
@@ -85,14 +86,12 @@ async function listLightDevices(userId, page = 0, limit = 5) {
   return [];
 }
 
-async function listAllLightDevices(userId, page = 0, limit = 5) {
-  if (!userId) {
-    throw new Error('User id is required');
-  }
+async function listAllLightDevices(page = 0, limit = 5) {
   const offset = page * limit;
   const poolConnection = await connection.getConnection();
-  const lightDevicesListSQL = `SELECT l.*, light_switch_state.state_id as current_state  FROM light_switch_state
+  const lightDevicesListSQL = `SELECT l.id, l.address, l.name as ligth_device_name, l.initial_state, m.name as manufacturer_name, light_switch_state.state_id as current_state  FROM light_switch_state
     LEFT JOIN lights l on light_switch_state.light_id = l.id
+    LEFT JOIN manufacturares m on l.manufacturer_id = m.id
     LIMIT ?, ?`;
   const [rows] = await poolConnection.execute(lightDevicesListSQL, [offset, limit]);
   if (rows && rows.length > 0) {
