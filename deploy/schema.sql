@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.27, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database:
+-- Host: 127.0.0.1    Database: lights_db
 -- ------------------------------------------------------
 -- Server version	5.7.28
 
@@ -16,14 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `lights_db`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `lights_db` /*!40100 DEFAULT CHARACTER SET latin1 */;
-
-USE `lights_db`;
-
---
 -- Table structure for table `light_states`
 --
 
@@ -33,7 +25,7 @@ CREATE TABLE `light_states` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT charset=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,7 +55,7 @@ CREATE TABLE `light_switch_state` (
   CONSTRAINT `light_switch_state_light_states_id_fk` FOREIGN KEY (`state_id`) REFERENCES `light_states` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `light_switch_state_lights_id_fk` FOREIGN KEY (`light_id`) REFERENCES `lights` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `light_switch_state_users_id_fk` FOREIGN KEY (`access_user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT charset=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,12 +63,15 @@ CREATE TABLE `light_switch_state` (
 --
 
 /*!40000 ALTER TABLE `light_switch_state` DISABLE KEYS */;
-INSERT INTO `light_switch_state` VALUES (1,1,8,1);
-INSERT INTO `light_switch_state` VALUES (2,1,9,1);
+INSERT INTO `light_switch_state` VALUES (1,2,8,1);
+INSERT INTO `light_switch_state` VALUES (2,2,9,1);
 INSERT INTO `light_switch_state` VALUES (3,1,10,1);
-INSERT INTO `light_switch_state` VALUES (4,1,11,1);
+INSERT INTO `light_switch_state` VALUES (4,2,11,1);
 INSERT INTO `light_switch_state` VALUES (5,1,13,1);
-INSERT INTO `light_switch_state` VALUES (6,1,16,1);
+INSERT INTO `light_switch_state` VALUES (6,2,16,1);
+INSERT INTO `light_switch_state` VALUES (7,2,17,2);
+INSERT INTO `light_switch_state` VALUES (8,2,18,2);
+INSERT INTO `light_switch_state` VALUES (9,2,19,2);
 /*!40000 ALTER TABLE `light_switch_state` ENABLE KEYS */;
 
 --
@@ -97,7 +92,7 @@ CREATE TABLE `lights` (
   KEY `lights_light_states_id_fk` (`initial_state`),
   CONSTRAINT `lights_light_states_id_fk` FOREIGN KEY (`initial_state`) REFERENCES `light_states` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `lights_manufacturares_id_fk` FOREIGN KEY (`manufacturer_id`) REFERENCES `manufacturares` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT charset=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,6 +108,9 @@ INSERT INTO `lights` VALUES (10,'svetilnik25',1,'Cialkovskogo 4',1);
 INSERT INTO `lights` VALUES (11,'svetilnik26',1,'Cialkovskogo 4',1);
 INSERT INTO `lights` VALUES (13,'svetilnik27',1,'Cialkovskogo 4',1);
 INSERT INTO `lights` VALUES (16,'svetilnik29',1,'Cialkovskogo 4',1);
+INSERT INTO `lights` VALUES (17,'tovar 123',1,'kaluga 1',2);
+INSERT INTO `lights` VALUES (18,'toovar2',1,'kasdkaslda',2);
+INSERT INTO `lights` VALUES (19,'tovar3',1,'dasdas',2);
 /*!40000 ALTER TABLE `lights` ENABLE KEYS */;
 
 --
@@ -125,7 +123,7 @@ CREATE TABLE `manufacturares` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT charset=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,7 +144,7 @@ CREATE TABLE `roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT charset=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,7 +172,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_login_uindex` (`login`),
   KEY `users_roles_id_fk` (`role_id`),
   CONSTRAINT `users_roles_id_fk` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT charset=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,6 +181,8 @@ CREATE TABLE `users` (
 
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'faker_nickname','faker','b340ffd07e2b8538727eb2fd78c2dda8915bb7388774a83c3694648e246c9112',1);
+INSERT INTO `users` VALUES (2,'Petya','user1','590723609fa552658d3fc7aad1d720245b3e5bd904e6d59b0e4433b4b5c749b4',2);
+INSERT INTO `users` VALUES (3,'Admin','admin','1fd849baf9cc24c3c13f83005d8c2072c844e426458480e8e9d47aea721a748c',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -194,4 +194,4 @@ INSERT INTO `users` VALUES (1,'faker_nickname','faker','b340ffd07e2b8538727eb2fd
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-19 22:18:45
+-- Dump completed on 2019-10-21 22:02:12
