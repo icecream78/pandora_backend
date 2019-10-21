@@ -3,7 +3,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
-function generateJWT(userId = 0, login = '') {
+function generateJWT(userId = 0, login = '', role_id) {
   const today = new Date();
   const expirationDate = new Date(today);
   expirationDate.setDate(today.getDate() + 60);
@@ -11,6 +11,7 @@ function generateJWT(userId = 0, login = '') {
   return jwt.sign({
     login,
     id: userId,
+    role_id,
     exp: parseInt(expirationDate.getTime() / 1000, 10),
   }, JWT_SECRET);
 }
@@ -37,7 +38,7 @@ function auth(req, res, next) {
     if (err) return next(err);
 
     if (user) {
-      const token = generateJWT(user.id, user.login);
+      const token = generateJWT(user.id, user.login, user.role_id);
       return res.status(200).json({
         user: {
           nickname: user.nickname,

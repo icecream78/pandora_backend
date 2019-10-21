@@ -26,6 +26,15 @@ async function initConnection(host = 'localhost', user = '', password = '', data
     password,
     Promise: bluebird,
   });
+
+  connection.on('error', (err) => {
+    console.log('db error', err);
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      initConnection();
+    } else {
+      throw err;
+    }
+  });
   return true;
 }
 
@@ -34,6 +43,7 @@ async function findUser(login, password) {
   const hashedPassword = getPasswordHash(password);
   const userSearchSQL = 'SELECT * FROM users WHERE login = ? AND password = ?';
   const [rows] = await poolConnection.execute(userSearchSQL, [login, hashedPassword]);
+  await poolConnection.release();
   if (rows && rows.length > 0) {
     return rows[0];
   }
@@ -51,6 +61,7 @@ async function insertNewLightDevice(lightInfo = {
   const [lightSQLRes] = await poolConnection.execute(newLightSQL, insertInfo);
   if (!(lightSQLRes && lightSQLRes.affectedRows > 0)) {
     poolConnection.rollback();
+    await poolConnection.release();
     return false;
   }
 
@@ -59,11 +70,13 @@ async function insertNewLightDevice(lightInfo = {
   const [lightStateRes] = await poolConnection.execute(lightStateSQL, lightStateInfo);
   if (!lightStateRes && lightStateRes.affectedRows > 0) {
     poolConnection.rollback();
+    await poolConnection.release();
     return false;
   }
   const commitErr = await poolConnection.commit();
   if (commitErr[1]) {
     poolConnection.rollback();
+    await poolConnection.release();
     return false;
   }
   return true;
@@ -80,6 +93,7 @@ async function listLightDevices(userId, page = 0, limit = 5) {
   LEFT JOIN manufacturares m on l.manufacturer_id = m.id
   WHERE light_switch_state.access_user_id = ? LIMIT ?, ?`;
   const [rows] = await poolConnection.execute(lightDevicesListSQL, [userId, offset, +limit]);
+  await poolConnection.release();
   if (rows && rows.length > 0) {
     return rows;
   }
@@ -94,6 +108,7 @@ async function listAllLightDevices(page = 0, limit = 5) {
   LEFT JOIN manufacturares m on l.manufacturer_id = m.id
   LIMIT ?, ?`;
   const [rows] = await poolConnection.execute(lightDevicesListSQL, [offset, +limit]);
+  await poolConnection.release();
   if (rows && rows.length > 0) {
     return rows;
   }
@@ -112,6 +127,7 @@ async function triggerLightDevice(lightId, stateId) {
   const poolConnection = await connection.getConnection();
   const userSearchSQL = 'UPDATE light_switch_state SET state_id = ? WHERE light_id = ?';
   const [rows] = await poolConnection.execute(userSearchSQL, [stateId, lightId]);
+  await poolConnection.release();
   return rows && rows.affectedRows > 0;
 }
 
@@ -120,6 +136,7 @@ async function manufacturesList() {
   const poolConnection = await connection.getConnection();
   const manufacturesSQL = 'SELECT * FROM manufacturares';
   const [rows] = await poolConnection.execute(manufacturesSQL);
+  await poolConnection.release();
   if (rows && rows.length > 0) {
     return rows;
   }
@@ -131,6 +148,7 @@ async function systemUsersList() {
   const poolConnection = await connection.getConnection();
   const usersListSQL = 'SELECT id, nickname, role_id FROM users WHERE role_id != 1';
   const [rows] = await poolConnection.execute(usersListSQL);
+  await poolConnection.release();
   if (rows && rows.length > 0) {
     return rows;
   }
@@ -143,6 +161,7 @@ async function registerUser(login, password, nickname, role = 2) {
   const newUserSQL = 'INSERT INTO users(nickname, login, password, role_id) VALUES (?, ?, ?, ?)';
   const insertInfo = [nickname, login, getPasswordHash(password), role];
   const [insertRes] = await poolConnection.execute(newUserSQL, insertInfo);
+  await poolConnection.release();
   if (!(insertRes && insertRes.affectedRows > 0)) {
     return false;
   }
