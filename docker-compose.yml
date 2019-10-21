@@ -32,6 +32,7 @@ services:
       MYSQL_PASSWORD: 'pass'
       MYSQL_DB: 'lights_db'
       PORT: 3000
+      NODE_ENV: 'production'
     links:
       - 'db:db'
 volumes:
