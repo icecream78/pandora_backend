@@ -1,0 +1,38 @@
+---
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: pandora
+      MYSQL_DATABASE: lights_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_HOST: "0.0.0.0"
+    expose:
+      - '3306'
+    ports:
+    - '3306:3306'
+    volumes:
+      - ./deploy/schema.sql:/docker-entrypoint-initdb.d/init.sql
+      - "./database:/var/lib/mysql"
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+    - '3000:3000'
+    restart: always
+    environment:
+      MYSQL_HOST: 'db'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'pass'
+      MYSQL_DB: 'lights_db'
+      PORT: 3000
+    links:
+      - 'db:db'
+volumes:
+  db_data:
