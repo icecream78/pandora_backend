@@ -25,7 +25,7 @@ CREATE TABLE `light_states` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT charset=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -55,7 +55,7 @@ CREATE TABLE `light_switch_state` (
   CONSTRAINT `light_switch_state_light_states_id_fk` FOREIGN KEY (`state_id`) REFERENCES `light_states` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `light_switch_state_lights_id_fk` FOREIGN KEY (`light_id`) REFERENCES `lights` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `light_switch_state_users_id_fk` FOREIGN KEY (`access_user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT charset=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -84,7 +84,7 @@ CREATE TABLE `lights` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(255) NOT NULL,
   `manufacturer_id` int(11) NOT NULL,
-  `address` text NOT NULL,
+  `address` mediumtext NOT NULL,
   `initial_state` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `lights_name_uindex` (`name`),
@@ -92,7 +92,7 @@ CREATE TABLE `lights` (
   KEY `lights_light_states_id_fk` (`initial_state`),
   CONSTRAINT `lights_light_states_id_fk` FOREIGN KEY (`initial_state`) REFERENCES `light_states` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `lights_manufacturares_id_fk` FOREIGN KEY (`manufacturer_id`) REFERENCES `manufacturares` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT charset=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +123,7 @@ CREATE TABLE `manufacturares` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT charset=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,7 +144,7 @@ CREATE TABLE `roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT charset=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -172,7 +172,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `users_login_uindex` (`login`),
   KEY `users_roles_id_fk` (`role_id`),
   CONSTRAINT `users_roles_id_fk` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT charset=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -194,4 +194,4 @@ INSERT INTO `users` VALUES (3,'Admin','admin','1fd849baf9cc24c3c13f83005d8c2072c
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-21 22:02:12
+-- Dump completed on 2019-10-21 22:16:05
