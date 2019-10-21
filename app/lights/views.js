@@ -65,7 +65,7 @@ async function trigger(req, res) {
 // TODO: implement logic for listing lights
 async function list(req, res) {
   try {
-    const { body: { page, limit } } = req;
+    const { query: { page, limit } } = req;
     let executeFunc = null;
     if (req.user.role_id === 1) {
       executeFunc = req.db.listAllLightDevices(page, limit);

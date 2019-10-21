@@ -3,7 +3,7 @@ const views = require('./views');
 
 const router = express.Router();
 
-router.post('/login', views.auth);
-router.post('/register', views.register);
+router.get('/manufactures', views.manufactures);
+router.get('/users', views.users);
 
 module.exports = router;

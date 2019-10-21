@@ -51,6 +51,50 @@ function auth(req, res, next) {
   })(req, res, next);
 }
 
+async function register(req, res) {
+  const { body } = req;
+  // TODO: add validation to fields by type and values
+  if (!body.login) {
+    return res.status(422).json({
+      errors: {
+        login: 'is required',
+      },
+    });
+  }
+  if (!body.password) {
+    return res.status(422).json({
+      errors: {
+        password: 'is required',
+      },
+    });
+  }
+  if (!body.role) {
+    return res.status(422).json({
+      errors: {
+        role: 'is required',
+      },
+    });
+  }
+  if (!body.nickname) {
+    return res.status(422).json({
+      errors: {
+        nickname: 'is required',
+      },
+    });
+  }
+
+  try {
+    const result = await req.db.registerUser(body.login, body.password, body.nickname, body.role);
+    if (!result) {
+      return res.status(401).json({ ok: false });
+    }
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    return res.status(500).json({ error: 'Fail while create new user' });
+  }
+}
+
 module.exports = {
   auth,
+  register,
 };

@@ -76,10 +76,10 @@ async function listLightDevices(userId, page = 0, limit = 5) {
   const offset = page * limit;
   const poolConnection = await connection.getConnection();
   const lightDevicesListSQL = `SELECT l.id, l.address, l.name as ligth_device_name, l.initial_state, m.name as manufacturer_name, light_switch_state.state_id as current_state  FROM light_switch_state
-    LEFT JOIN lights l on light_switch_state.light_id = l.id
-    LEFT JOIN manufacturares m on l.manufacturer_id = m.id
-    WHERE light_switch_state.access_user_id = ? LIMIT ?, ?`;
-  const [rows] = await poolConnection.execute(lightDevicesListSQL, [userId, offset, limit]);
+  LEFT JOIN lights l on light_switch_state.light_id = l.id
+  LEFT JOIN manufacturares m on l.manufacturer_id = m.id
+  WHERE light_switch_state.access_user_id = ? LIMIT ?, ?`;
+  const [rows] = await poolConnection.execute(lightDevicesListSQL, [userId, offset, +limit]);
   if (rows && rows.length > 0) {
     return rows;
   }
@@ -90,12 +90,12 @@ async function listAllLightDevices(page = 0, limit = 5) {
   const offset = page * limit;
   const poolConnection = await connection.getConnection();
   const lightDevicesListSQL = `SELECT l.id, l.address, l.name as ligth_device_name, l.initial_state, m.name as manufacturer_name, light_switch_state.state_id as current_state  FROM light_switch_state
-    LEFT JOIN lights l on light_switch_state.light_id = l.id
-    LEFT JOIN manufacturares m on l.manufacturer_id = m.id
-    LIMIT ?, ?`;
-  const [rows] = await poolConnection.execute(lightDevicesListSQL, [offset, limit]);
+  LEFT JOIN lights l on light_switch_state.light_id = l.id
+  LEFT JOIN manufacturares m on l.manufacturer_id = m.id
+  LIMIT ?, ?`;
+  const [rows] = await poolConnection.execute(lightDevicesListSQL, [offset, +limit]);
   if (rows && rows.length > 0) {
-    return rows[0];
+    return rows;
   }
   return [];
 }
@@ -115,11 +115,48 @@ async function triggerLightDevice(lightId, stateId) {
   return rows && rows.affectedRows > 0;
 }
 
+// TODO: cache this data by redis
+async function manufacturesList() {
+  const poolConnection = await connection.getConnection();
+  const manufacturesSQL = 'SELECT * FROM manufacturares';
+  const [rows] = await poolConnection.execute(manufacturesSQL);
+  if (rows && rows.length > 0) {
+    return rows;
+  }
+  return [];
+}
+
+// TODO: cache this data by redis
+async function systemUsersList() {
+  const poolConnection = await connection.getConnection();
+  const usersListSQL = 'SELECT id, nickname, role_id FROM users WHERE role_id != 1';
+  const [rows] = await poolConnection.execute(usersListSQL);
+  if (rows && rows.length > 0) {
+    return rows;
+  }
+  return [];
+}
+
+// TODO: test handling commit changes error
+async function registerUser(login, password, nickname, role = 2) {
+  const poolConnection = await connection.getConnection();
+  const newUserSQL = 'INSERT INTO users(nickname, login, password, role_id) VALUES (?, ?, ?, ?)';
+  const insertInfo = [nickname, login, getPasswordHash(password), role];
+  const [insertRes] = await poolConnection.execute(newUserSQL, insertInfo);
+  if (!(insertRes && insertRes.affectedRows > 0)) {
+    return false;
+  }
+  return true;
+}
+
 module.exports = {
   initConnection,
   findUser,
+  registerUser,
   insertNewLightDevice,
   listLightDevices,
   listAllLightDevices,
   triggerLightDevice,
+  manufacturesList,
+  systemUsersList,
 };
