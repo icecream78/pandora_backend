@@ -132,6 +132,7 @@ CREATE TABLE `manufacturares` (
 
 /*!40000 ALTER TABLE `manufacturares` DISABLE KEYS */;
 INSERT INTO `manufacturares` VALUES (1,'Kaluga Astral');
+INSERT INTO `manufacturares` VALUES (2,'Pandora');
 /*!40000 ALTER TABLE `manufacturares` ENABLE KEYS */;
 
 --
@@ -152,8 +153,8 @@ CREATE TABLE `roles` (
 --
 
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (1,'God');
-INSERT INTO `roles` VALUES (2,'Man');
+INSERT INTO `roles` VALUES (1,'Администратор');
+INSERT INTO `roles` VALUES (2,'Менеджер');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 
 --
@@ -181,7 +182,7 @@ CREATE TABLE `users` (
 
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES (1,'faker_nickname','faker','b340ffd07e2b8538727eb2fd78c2dda8915bb7388774a83c3694648e246c9112',1);
-INSERT INTO `users` VALUES (2,'Petya','user1','590723609fa552658d3fc7aad1d720245b3e5bd904e6d59b0e4433b4b5c749b4',2);
+INSERT INTO `users` VALUES (2,'Петя','user1','590723609fa552658d3fc7aad1d720245b3e5bd904e6d59b0e4433b4b5c749b4',2);
 INSERT INTO `users` VALUES (3,'Admin','admin','1fd849baf9cc24c3c13f83005d8c2072c844e426458480e8e9d47aea721a748c',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
