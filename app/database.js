@@ -30,6 +30,7 @@ async function initConnection(host = 'localhost', user = '', password = '', data
   connection.on('error', (err) => {
     console.log('db error', err);
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+      console.log('Lose db connection. Reconnecting...')
       initConnection();
     } else {
       throw err;
