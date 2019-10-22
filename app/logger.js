@@ -12,7 +12,7 @@ const logger = createLogger({
     format.splat(),
     format.json(),
   ),
-  defaultMeta: { service: 'your-service-name' },
+  defaultMeta: { service: 'pandora-backend' },
   transports: [
     new transports.File({ filename: 'pandora-lights-error.log', level: 'error' }),
     new transports.File({ filename: 'pandora-lights-combined.log' }),

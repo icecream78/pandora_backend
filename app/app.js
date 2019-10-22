@@ -1,3 +1,5 @@
+const SESSION_SECRET = process.env.SESSION_SECRET || 'secret';
+
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -27,8 +29,13 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({
-  secret: 'passport-tutorial', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false,
+  secret: SESSION_SECRET, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false,
 }));
+app.use((req, res, next) => {
+  const date = new Date();
+  req.logger.info(`[${date.toString()}] ${req.method} ${req.originalUrl} ${res.statusCode} ${req.headers['user-agent']}`);
+  return next();
+});
 
 // End middlewares section
 
