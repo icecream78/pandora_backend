@@ -13,6 +13,12 @@ async function create(req, res) {
     });
   }
 
+  if (req.user.role_id !== 1) {
+    return res.status(422).json({
+      error: 'Недостаточно прав на добавление новых устройств'
+    });
+  }
+
   try {
     const insertRes = await req.db.insertNewLightDevice(req.body);
     if (insertRes) {
